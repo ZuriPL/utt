@@ -1,5 +1,3 @@
-import Test1 from "../../.utt/pkg1/group1/Test1.ts";
-
 async function chdirToWorkspace(): Promise<boolean> {
     try {
         const res = await Deno.lstat(".utt");
