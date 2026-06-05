@@ -1,5 +1,5 @@
 import { toFileUrl, join } from "@std/path"
-import { TestDescriptor, testTask } from "$types/tests.ts";
+import type { TestDescriptor, testTask } from "$types/tests.ts";
 
 /**
  * Load a Test Class from a given path

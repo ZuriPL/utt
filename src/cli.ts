@@ -3,6 +3,7 @@
 import { Command, Option } from 'commander'
 import { testCommand } from "$src/commands/test.ts";
 import { changeEditPackageCommand } from "$src/commands/editing.ts";
+import { settingsCommand } from '$src/commands/settings.ts'
 
 const program = new Command();
 
@@ -30,6 +31,9 @@ program.command("edit")
     .argument("<package>")
     .action(changeEditPackageCommand)
 
+program.command("settings")
+    .description("Modify settings for this project")
+    .action(settingsCommand)
 
 
 program.parse()

@@ -1,5 +1,5 @@
-import Test from "$utils/TestInterface.ts";
-import { TestDescriptor, testTask } from "$types/tests.ts";
+import type Test from "$public/TestInterface.ts";
+import type { testTask } from "$types/tests.ts";
 
 export async function runTest(testInstance: Test) {
     const command = new Deno.Command("../program", {

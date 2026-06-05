@@ -2,7 +2,7 @@ import { prepareTasks } from "$src/runner/loader.ts"
 import { readWorkspace, readPackage } from "$src/runner/finder.ts"
 import { runTests } from "$src/runner/runner.ts"
 import type { TestDescriptor } from "$types/tests.ts";
-import cfg from "$config/cfg.ts";
+import cfg from "$src/utlis/cfg.ts";
 
 export async function testCommand(pkg: string, options: any) {
     let program = getDefaultProgram()
