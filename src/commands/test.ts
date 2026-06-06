@@ -2,7 +2,7 @@ import { prepareTasks } from "$src/runner/loader.ts"
 import { readPackage, readWorkspace } from "$src/runner/finder.ts"
 import { runTests } from "$src/runner/runner.ts"
 import type { TestDescriptor } from "$types/tests.ts"
-import cfg from "$src/utlis/cfg.ts"
+import cfg from "$src/utils/cfg.ts"
 
 type OptionsObject = {
 	program: string

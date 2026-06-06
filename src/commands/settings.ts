@@ -1,4 +1,4 @@
-import cfg from "$src/utlis/cfg.ts"
+import cfg from "$src/utils/cfg.ts"
 import { checkbox, input, select, Separator } from "@inquirer/prompts"
 
 enum Page {
