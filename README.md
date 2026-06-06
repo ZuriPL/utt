@@ -27,7 +27,7 @@ $ utt pull <link>
 
 Configure `utt` in an interactive window
 ```bash
-$ utt settings
+$ utt config
 ```
 
 Run all downloaded packages

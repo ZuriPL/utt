@@ -3,7 +3,7 @@
 import { Command, Option } from "commander"
 import { testCommand } from "$src/commands/test.ts"
 import { changeEditPackageCommand } from "$src/commands/editing.ts"
-import { settingsCommand } from "$src/commands/settings.ts"
+import { configCommand } from "$src/commands/config.ts"
 
 const program = new Command()
 
@@ -42,8 +42,8 @@ program.command("edit")
 	.argument("<package>")
 	.action(changeEditPackageCommand)
 
-program.command("settings")
-	.description("Modify settings for this project")
-	.action(settingsCommand)
+program.command("config")
+	.description("Configure utt for this project")
+	.action(configCommand)
 
 program.parse()

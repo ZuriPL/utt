@@ -2,7 +2,7 @@ import { prepareTasks } from "$src/runner/loader.ts"
 import { readPackage, readAll } from "$src/runner/finder.ts"
 import { runTests } from "$src/runner/runner.ts"
 import type { TestDescriptor } from "$types/tests.ts"
-import cfg from "$src/utils/cfg.ts"
+import cfg from "$src/utils/state.ts"
 import { getRoot } from "$src/utils/paths.ts"
 import { join } from "@std/path/join"
 
@@ -26,7 +26,7 @@ async function getProgram(options: OptionsObject) {
 	if (options.program) {
 		return options.program
 	}
-	if (cfg.has("program")) {
+	if (cfg.has("cfg.program")) {
 		const root = await getRoot()
 
 		return join(root, cfg.get("program"))

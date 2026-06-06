@@ -7,12 +7,26 @@ type ConfigSchema = {
 	stats: string[]
 }
 
-const defaults: ConfigSchema = {
-	program: "./program",
-	stats: ["Real time", "Memory usage"],
+type StateSchema = {
+	editingPackage: string
 }
 
-const cfg = new Conf<ConfigSchema>({
+type Schema = {
+	cfg: ConfigSchema,
+	state: StateSchema
+}
+
+const defaults: Schema = {
+	cfg: {
+		program: "./program",
+		stats: ["Real time", "Memory usage"],
+	},
+	state: {
+		editingPackage: ""
+	}
+}
+
+const cfg = new Conf<Schema>({
 	projectName: "utt",
 	projectSuffix: "",
 	cwd: await getOrInitWorkspace(),

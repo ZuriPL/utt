@@ -1,19 +1,19 @@
-import cfg from "$src/utils/cfg.ts"
+import cfg from "$src/utils/state.ts"
 import { checkbox, input, select, Separator } from "@inquirer/prompts"
 
 enum Page {
-	settings = "SETTINGS",
+	main = "MAIN",
 	close = "CLOSE",
 	program = "PROGRAM",
 	stats = "STATS",
 }
 
-export async function settingsCommand() {
-	let setting: Page = Page.settings
+export async function configCommand() {
+	let setting: Page = Page.main
 
 	while (true) {
-		if (setting == Page.settings) {
-			setting = await settingsPage()
+		if (setting == Page.main) {
+			setting = await configPage()
 		} else if (setting == Page.program) {
 			setting = await programPage()
 		} else if (setting == Page.stats) {
@@ -24,20 +24,20 @@ export async function settingsCommand() {
 	}
 }
 
-async function settingsPage() {
+async function configPage() {
 	const setting = await select({
-		message: "Edit settings",
+		message: "Edit config",
 		choices: [
 			new Separator(),
 			{
 				name: "Tested executable",
 				value: Page.program,
-				description: cfg.get("program"),
+				description: cfg.get("cfg.program"),
 			},
 			{
 				name: "Configure displayed stats",
 				value: Page.stats,
-				description: cfg.get("stats")?.join(", "),
+				description: cfg.get("cfg.stats")?.join(", "),
 			},
 			new Separator(),
 			{
@@ -54,7 +54,7 @@ async function settingsPage() {
 }
 
 async function statsPage(): Promise<Page> {
-	const currentSettings = cfg.get("stats")
+	const currentSettings = cfg.get("cfg.stats")
 
 	function choice(value: string) {
 		return {
@@ -75,20 +75,20 @@ async function statsPage(): Promise<Page> {
 		clearPromptOnDone: true,
 	})
 
-	cfg.set("stats", res)
+	cfg.set("cfg.stats", res)
 
-	return Page.settings
+	return Page.main
 }
 
 async function programPage(): Promise<Page> {
 	const value = await input({
 		message: "Enter the path to the tested program",
-		default: cfg.get("program"),
+		default: cfg.get("cfg.program"),
 	}, {
 		clearPromptOnDone: true,
 	})
 
-	cfg.set("program", value)
+	cfg.set("cfg.program", value)
 
-	return Page.settings
+	return Page.main
 }
