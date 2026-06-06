@@ -1,5 +1,4 @@
 import type { ITest } from "$public/TestInterface.ts"
-import SampleTest from "$/.utt/src/pkg/sample.ts"
 
 // runs a test and returns its output
 export async function executeTask(program: string, cwd: string, test: ITest) {
@@ -18,25 +17,13 @@ export async function executeTask(program: string, cwd: string, test: ITest) {
 
 	const { code, stdout } = await instance.output()
 
-	let out = new TextDecoder().decode(stdout)
-	if (test.parse) out = test.parse(out)
+	let output = new TextDecoder().decode(stdout)
+	if (test.parse) output = test.parse(output)
 
 	return {
-		out,
+		output,
 		meta: {
 			code
 		}
 	}
-}
-
-// export async function executeTasksList(list: )
-
-if (import.meta.main) {
-    const res = await executeTask(
-        './program',
-        '.',
-        new SampleTest()
-    )
-
-    console.log(res)
 }

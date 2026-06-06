@@ -3,9 +3,10 @@ import { executeTask } from "$src/runner/executor.ts"
 import { TarStream } from '@std/tar'
 import { loadTest } from "$src/runner/loader.ts"
 import { ensureDir, walk } from "@std/fs"
-import { relative, join, basename } from "@std/path"
+import { relative, join } from "@std/path"
 import { assertDir, getSrcDir, getTestsDir } from "$src/utils/dirs.ts"
 import cfg from "$src/utils/state.ts"
+import { makeTemp } from "$src/utils/temp.ts"
 
 export async function compilePackage(pkg: string, program?: string) {
     program = program ?? cfg.get("cfg.program")
@@ -73,7 +74,7 @@ async function compileTest(src: string, dest: string, test: string, program: str
         write: true,
     })
     
-    const temp = await Deno.makeTempDir({ prefix: "utt-" })
+    const temp = await makeTemp()
     
     const result = await executeTask(program, temp, testInstance)
     
@@ -82,17 +83,17 @@ async function compileTest(src: string, dest: string, test: string, program: str
             // copy test.ts class into the archive
             controller.enqueue({
                 type: "file",
-                path: basename(path),
+                path: "test.ts",
                 size: (await testFile.stat()).size,
                 readable: testFile.readable,
             });
 
             // save the output of the test into the archive
-            const out = new TextEncoder().encode(result.out)
+            const out = new TextEncoder().encode(result.output)
 
             controller.enqueue({
                 type: "file",
-                path: "stdout",
+                path: "model.out",
                 size: out.byteLength,
                 readable: ReadableStream.from([out])
             })

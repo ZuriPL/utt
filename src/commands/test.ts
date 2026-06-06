@@ -1,9 +1,7 @@
 import { prepareTasks } from "$src/runner/loader.ts"
 import { readPackage, readAll } from "$src/runner/finder.ts"
 import type { TestDescriptor } from "$types/tests.ts"
-import cfg from "$src/utils/state.ts"
-import { getRootDir } from "$src/utils/dirs.ts"
-import { join } from "@std/path/join"
+import { runTests } from "$src/runner/runner.ts"
 
 type OptionsObject = {
 	program: string
@@ -21,20 +19,7 @@ async function assertExists(program: string) {
 
 	if (!file.isFile) throw new Error("Not a file")
 
-		return program
-}
-
-async function getProgram(options: OptionsObject) {
-	if (options.program) {
-		return options.program
-	}
-	if (cfg.has("cfg.program")) {
-		const root = await getRootDir()
-
-		return join(root, cfg.get("cfg.program"))
-	}
-
-	throw new Error("Program is not specified")
+	return program
 }
 
 export async function testCommand(pkg: string, options: OptionsObject) {
@@ -48,5 +33,5 @@ export async function testCommand(pkg: string, options: OptionsObject) {
 		descriptors = await readAll()
 	}
 
-	
+	runTests(descriptors, program)
 }

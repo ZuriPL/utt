@@ -1,6 +1,6 @@
 import type { ITest } from "$public/TestInterface.ts"
 import { join } from "@std/path/join"
-import { getSrcDir } from "$src/utils/dirs.ts"
+import { getTestsDir } from "$src/utils/dirs.ts"
 import { basename } from "@std/path/basename"
 
 export class TestDescriptor {
@@ -27,7 +27,7 @@ export class TestDescriptor {
 	}
 
 	async resolveClassPath() {
-		return join(await getSrcDir(), this.#pkg, this.#group, this.#name.concat(".ts"))
+		return join(await getTestsDir(), this.#pkg, this.#group, this.#name.concat(".utest"))
 	}
 }
 
