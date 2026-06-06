@@ -1,5 +1,10 @@
-export default interface Test {
+export type Metadata = {
+	code: number
+}
+
+export interface ITest {
 	args(): string[]
 	stdin(): string
-	check(stdout: string, status: number): boolean
+	check(stdout: string, meta: Metadata): boolean
+	parse?(stdout: string): string
 }

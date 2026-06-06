@@ -1,12 +1,17 @@
-import type Test from "$public/TestInterface.ts"
+import type { ITest } from "$public/TestInterface.ts"
+import { join } from "@std/path/join"
+import { getSrcDir } from "$src/utils/dirs.ts"
+import { basename } from "@std/path/basename"
 
 export class TestDescriptor {
-	#className: string
+	#name: string
 	#pkg: string
 	#group: string
 
 	constructor(pkg: string, group: string, className: string) {
-		this.#pkg = pkg, this.#group = group, this.#className = className
+		this.#name = basename(className)
+		this.#pkg = pkg
+		this.#group = group
 	}
 
 	get pkg() {
@@ -17,12 +22,12 @@ export class TestDescriptor {
 		return this.#group
 	}
 
-	get className() {
-		return this.#className
+	get name() {
+		return this.#name
 	}
 
-	resolveClassPath() {
-		return [this.#pkg, this.#group, this.#className].join("/")
+	async resolveClassPath() {
+		return join(await getSrcDir(), this.#pkg, this.#group, this.#name.concat(".ts"))
 	}
 }
 
@@ -30,5 +35,5 @@ export type testTask = {
 	pkg: string
 	group: string
 	name: string
-	obj: Test
+	obj: ITest
 }
