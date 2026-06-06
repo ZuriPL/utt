@@ -1,9 +1,11 @@
 #!/usr/bin/env deno
 
-import { Command, Option } from "commander"
+import denoJson from '$/deno.json' with { type: "json" }
+import { Command, Option, InvalidArgumentError, Argument } from "commander"
 import { testCommand } from "$src/commands/test.ts"
-import { changeEditPackageCommand } from "$src/commands/editing.ts"
+import { createTestCommand, deleteTestCommand, setPackageCommand } from "$src/commands/editing.ts"
 import { configCommand } from "$src/commands/config.ts"
+import { compileCommand } from "$src/commands/compile.ts"
 
 const program = new Command()
 
@@ -11,7 +13,9 @@ program.name("utt")
 	.description(
 		"Universal Testing Tool - easily write and run tests for any program",
 	)
-	.version("0.0.1")
+	.version(denoJson.version)
+
+// TEST COMMAND
 
 const preserveOutputOption = new Option(
 	"--preserve-output [option]",
@@ -36,14 +40,69 @@ program.command("test")
 	)
 	.addOption(statsOptions)
 	.action(testCommand)
-
-program.command("edit")
-	.description("Change which test package is being edited")
-	.argument("<package>")
-	.action(changeEditPackageCommand)
+	
+// CONFIG COMMAND
 
 program.command("config")
 	.description("Configure utt for this project")
 	.action(configCommand)
+
+// PACKAGE COMMAND
+
+program.command("package")
+	.description("Select package to work on")
+	.argument("<package>")
+	.action(setPackageCommand)
+
+// CREATE COMMAND
+
+const testNameArgument = new Argument("<name>",
+	 "Specify the name of the test. use the dot syntax to put a test in the group: group.name"
+	)
+	.argParser(nameParser)
+
+function nameParser(str: string) {
+	// if name includes a dot like so: group.name, we want to create a test in the group,
+	// otherwise, create the test in the root of the package
+
+	if (str.includes(".")) {
+		const [ group, name, extra ] = str.split(".")
+
+		if (extra) throw new InvalidArgumentError("You can use the dot syntax to specify the group of the created test like so: group.name")
+
+		return {
+			group, name
+		}
+	} else {
+		return { name: str }
+	}
+}
+
+program.command("create")
+	.description("Creates a test in the currently edited package")
+	.addArgument(testNameArgument)
+	.action(createTestCommand)
+
+// DELETE COMMAND
+
+program.command("delete")
+	.description("Delete a test in the currently edited package")
+	.addArgument(testNameArgument)
+	.action(deleteTestCommand)
+
+// COMPILE COMMAND
+
+program.command("compile")
+	.description("Compile a package into .utest files")
+	.argument("<package>")
+	.action(compileCommand)
+
+/*
+// PEEK COMMAND
+program.command("peek")
+	.description("Generate raw files from a given .utest file")
+	.argument("<path>")
+	.action(peekCommand)
+*/
 
 program.parse()

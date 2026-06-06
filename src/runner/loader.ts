@@ -1,17 +1,14 @@
-import { join, toFileUrl } from "@std/path"
 import type { TestDescriptor, testTask } from "$types/tests.ts"
-import { getTests } from "$src/utils/paths.ts"
+import type { ITest } from "$public/TestInterface.ts"
 
 /**
  * Load a Test Class from a given path
  *
  * @param path path to the class, relative to `.utt/tests/` directory
  */
-export async function loadTest(path: string) {
-	const absolutePath = join(await getTests(), path)
-	const moduleUrl = toFileUrl(absolutePath).href
+export async function loadTest(path: string): Promise<ITest> {
 
-	const Test = (await import(moduleUrl)).default
+	const Test = (await import(path)).default
 
 	return new Test()
 }
@@ -24,7 +21,7 @@ async function createTask(descriptor: TestDescriptor) {
 	return {
 		pkg: descriptor.pkg,
 		group: descriptor.group,
-		name: descriptor.className.split(".")[0],
-		obj: await loadTest(descriptor.resolveClassPath()),
+		name: descriptor.name,
+		obj: await loadTest(await descriptor.resolveClassPath()),
 	}
 }
