@@ -6,6 +6,9 @@ import { testCommand } from "$src/commands/test.ts"
 import { createTestCommand, deleteTestCommand, setPackageCommand } from "$src/commands/editing.ts"
 import { configCommand } from "$src/commands/config.ts"
 import { compileCommand } from "$src/commands/compile.ts"
+import { join } from "@std/path/join"
+import { getRootDir } from "$src/utils/dirs.ts"
+import cfg from "$src/utils/state.ts"
 
 const program = new Command()
 
@@ -27,6 +30,22 @@ const preserveOutputOption = new Option(
 
 const statsOptions = new Option("--stats", "Specify stats to report")
 
+const programOption = new Option("--program, -p", "Specify the path to the tested program")
+	.default(
+		join(
+			await getRootDir(),
+			cfg.get("cfg.program")
+		)
+	)
+	.argParser(programParser)
+
+function programParser(arg: string) {
+	return join(
+		Deno.cwd(),
+		arg
+	)
+}
+
 program.command("test")
 	.description("Runs tests")
 	.argument(
@@ -34,10 +53,7 @@ program.command("test")
 		"Test package to run. Runs all found tests if no argument is specified",
 	)
 	.addOption(preserveOutputOption)
-	.option(
-		"--program, -p <program>",
-		"Specify the path to the program being tested",
-	)
+	.addOption(programOption)
 	.addOption(statsOptions)
 	.action(testCommand)
 	
@@ -95,6 +111,7 @@ program.command("delete")
 program.command("compile")
 	.description("Compile a package into .utest files")
 	.argument("<package>")
+	.addOption(programOption)
 	.action(compileCommand)
 
 /*

@@ -10,7 +10,7 @@ type OptionsObject = {
 	preserveOutput: string
 }
 
-async function assertProgramExists(program: string) {
+async function assertExists(program: string) {
 	let file: Deno.FileInfo
 
 	try {
@@ -18,7 +18,10 @@ async function assertProgramExists(program: string) {
 	} catch (_err) {
 		throw new Error("Program not found")
 	}
+
 	if (!file.isFile) throw new Error("Not a file")
+
+		return program
 }
 
 async function getProgram(options: OptionsObject) {
@@ -35,8 +38,7 @@ async function getProgram(options: OptionsObject) {
 }
 
 export async function testCommand(pkg: string, options: OptionsObject) {
-	const program = await getProgram(options)
-	assertProgramExists(program)
+	const program = await assertExists(options.program)
 
 	let descriptors: TestDescriptor[]
 
@@ -46,5 +48,5 @@ export async function testCommand(pkg: string, options: OptionsObject) {
 		descriptors = await readAll()
 	}
 
-	const tasks = await prepareTasks(descriptors)
+	
 }

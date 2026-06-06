@@ -1,6 +1,6 @@
 import { compilePackage } from "$src/runner/compiler.ts";
 
-export async function compileCommand(pkg: string, options: object) {
+export async function compileCommand(pkg: string, options: { program: string }) {
     // console.log(options)
-    await compilePackage(pkg)
+    await compilePackage(pkg, options.program)
 }
