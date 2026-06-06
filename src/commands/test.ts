@@ -1,9 +1,8 @@
 import { prepareTasks } from "$src/runner/loader.ts"
 import { readPackage, readAll } from "$src/runner/finder.ts"
-import { runTests } from "$src/runner/runner.ts"
 import type { TestDescriptor } from "$types/tests.ts"
 import cfg from "$src/utils/state.ts"
-import { getRoot } from "$src/utils/paths.ts"
+import { getRootDir } from "$src/utils/dirs.ts"
 import { join } from "@std/path/join"
 
 type OptionsObject = {
@@ -16,7 +15,7 @@ async function assertProgramExists(program: string) {
 
 	try {
 		file = await Deno.lstat(program)
-	} catch (err) {
+	} catch (_err) {
 		throw new Error("Program not found")
 	}
 	if (!file.isFile) throw new Error("Not a file")
@@ -27,9 +26,9 @@ async function getProgram(options: OptionsObject) {
 		return options.program
 	}
 	if (cfg.has("cfg.program")) {
-		const root = await getRoot()
+		const root = await getRootDir()
 
-		return join(root, cfg.get("program"))
+		return join(root, cfg.get("cfg.program"))
 	}
 
 	throw new Error("Program is not specified")
@@ -48,6 +47,4 @@ export async function testCommand(pkg: string, options: OptionsObject) {
 	}
 
 	const tasks = await prepareTasks(descriptors)
-
-	runTests(tasks, program)
 }
