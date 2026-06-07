@@ -1,4 +1,4 @@
-import { input } from "@inquirer/prompts"
+import { hash } from "node:crypto"
 
 export type Metadata = {
 	code: number
@@ -29,6 +29,11 @@ export abstract class Test {
 	raw(str: string) {
 		this.#stdin = this.#stdin.concat(str)
 		return this.#stdin
+	}
+
+	// parsing utilities
+	hash(input: string) {
+		return hash('sha256', input)
 	}
 
 	// checking utilities

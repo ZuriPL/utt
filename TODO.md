@@ -9,6 +9,6 @@
 # SDK
 
 [] hash() function (parsing)
-[] line()
+[x] line()
 [] define() for creating objects
-
+[] rewrite parse (and other parts of the compiler/runner) to use streams
