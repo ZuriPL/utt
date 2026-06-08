@@ -4,7 +4,7 @@ import type { TestDescriptor } from "$types/tests.ts"
 import { makeTemp } from "$src/utils/temp.ts"
 import { parseUtest } from "$src/tester/loader.ts"
 import { executeTest } from "$src/tester/executor.ts"
-import type { Test, TestResult } from "utt"
+import type { Test, TestOutput } from "utt"
 
 type TestReport = (
     {
@@ -16,10 +16,10 @@ type TestReport = (
     }
 )
 
-function validateTest(output: TestResult, expected: TestResult, test: Test): TestReport {
+async function validateTest(output: TestOutput, expected: TestOutput, test: Test): Promise<TestReport> {
     try {
-        test.check(output, expected)
-        return {state: true}
+        await test.check(output, expected)
+        return { state: true }
     } catch (error) {
         if (error instanceof Error) {
             // deno-lint-ignore no-ex-assign
@@ -57,7 +57,7 @@ export async function runTests(descriptors: TestDescriptor[], program: string) {
 
             const output = await executeTest(parsed.test, program)
 
-            const report: TestReport = validateTest(output, parsed.expected, parsed.test)
+            const report: TestReport = await validateTest(output, parsed.expected, parsed.test)
 
             console.log(report)
         } finally {

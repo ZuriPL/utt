@@ -26,7 +26,7 @@ export async function createTestCommand({ name, group }: { name: string, group?:
 
 	// Currently, this relies on the cli being run from the directory of the project
 	// TODO: decouple this
-	await Deno.writeTextFile(join(path, name + ".ts"), template, {
+	await Deno.writeTextFile(join(path, name + ".js"), template, {
 		create: true
 	})
 }

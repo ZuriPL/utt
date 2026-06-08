@@ -8,6 +8,9 @@ import { ensureDir } from "@std/fs"
 import { join } from "@std/path"
 import { assertDir, getSrcDir, getTestsDir } from "$src/utils/dirs.ts"
 import cfg from "$src/utils/state.ts"
+import { ZipFile } from "$src/utils/zip.ts"
+import { JsonStringifyStream } from "@std/json"
+import { zipReadableStreams } from "@std/streams/zip-readable-streams"
 
 export async function compilePackage(pkg: string, program?: string) {
     program = program ?? cfg.get("cfg.program")
@@ -25,7 +28,7 @@ export async function compilePackage(pkg: string, program?: string) {
 	await assertDir(src)
 
 	// treat tests outside of any group as it's own group
-    compileGroup(
+    await compileGroup(
         src, 
         dest,
         program
@@ -36,7 +39,7 @@ export async function compilePackage(pkg: string, program?: string) {
 	for await (const dir of groups) {
 		if (!dir.isDirectory) continue
 
-		compileGroup(
+		await compileGroup(
             join(src, dir.name), 
             join(dest, dir.name),
             program
@@ -50,7 +53,7 @@ async function compileGroup(src: string, dest: string, program: string) {
 	for await (const test of tests) {
 		if (!test.isFile || !test.name.endsWith('.js')) continue
 
-        compileTest(
+        await compileTest(
             src,
             dest,
             test.name,
@@ -71,7 +74,7 @@ async function compileTest(src: string, dest: string, test: string, program: str
     await ensureDir(dest)
     using archive = await Deno.open(join(
         dest,
-        test.replace(".js", ".utest")
+        test.replace(".js", ".zip")
     ), {
         create: true,
         write: true,
@@ -79,54 +82,18 @@ async function compileTest(src: string, dest: string, test: string, program: str
     
     // generate the expected answer
     const result = await executeTest(testInstance, program)
-    testInstance.assertCode?.(result.meta.code)
     
-    const stream = new ReadableStream({
-        async start(controller) {
-            // copy test.ts class into the archive
-            controller.enqueue({
-                type: "file",
-                path: "test.js",
-                size: (await testFile.stat()).size,
-                readable: testFile.readable,
-            });
-
-            // save the output of the test into the archive
-            const out = new TextEncoder().encode(result.stdout)
-
-            controller.enqueue({
-                type: "file",
-                path: "model.out",
-                size: out.byteLength,
-                readable: ReadableStream.from([out])
-            })
-            
-            // save the metadata
-            const meta = JSON.stringify(result.meta)
-            const metaBytes = new TextEncoder().encode(meta)
-            
-            controller.enqueue({
-                type: "file",
-                path: "meta.json",
-                size: metaBytes.byteLength,
-                readable: ReadableStream.from([metaBytes])
-            })
-
-            // save all the files created by the execution of the test
-            for (const [ file, content ] of result.files) {
-                const bytes = new TextEncoder().encode(content)
-
-                controller.enqueue({
-                    type: "file",
-                    path: file,
-                    size: bytes.byteLength,
-                    readable: ReadableStream.from([bytes])
-                })
-            }
-        
-            controller.close();
-        }
-    })
-
-    await stream.pipeThrough(new TarStream()).pipeTo(archive.writable)
+    const zip = new ZipFile(archive.writable)
+    
+    await zip.addFile("test.js", testFile.readable)
+    await zip.addFile("model.out", result.out)
+    await zip.addFile("status.json", ReadableStream.from([JSON.stringify(await result.status)]).pipeThrough(new TextEncoderStream()))
+    testInstance.__assertCode?.((await result.status).code)     // fail compiling if a decorator exists and reports an error
+    
+    console.log(testInstance.__files())
+    for (const [path, file] of await testInstance.__files()) {
+        await zip.addFile("env/" + path, file)
+    }
+    
+    await zip.save()
 }

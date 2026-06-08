@@ -1,13 +1,14 @@
 // This module is responsible for the actual running of the tested program
 
-import type { Test, TestResult } from "utt"
+import type { Test, TestOutput } from "utt"
 import { makeTemp } from "$src/utils/temp.ts"
 import { relative } from "@std/path"
 import { walk } from "@std/fs"
 import { toText } from "@std/streams/to-text"
+import { createHashTransformStream } from "$src/utils/hashStream.ts"
 
 // runs a test and returns data regarding its execution
-export async function executeTest(test: Test, program: string): Promise<TestResult> {
+export async function executeTest(test: Test, program: string): Promise<TestOutput> {
 	// prepare the task
 	const temp = await makeTemp()
 
@@ -20,15 +21,16 @@ export async function executeTest(test: Test, program: string): Promise<TestResu
 
 	const instance = command.spawn()
 
-	test.stdin().pipeTo(instance.stdin)
+	await test.__input().pipeTo(instance.stdin)
 
-	const { code, stdout } = await instance.output()
+	const output = instance.stdout.pipeThrough(createHashTransformStream())
 
-	let output = new TextDecoder().decode(stdout)
-	output = test.parse?.(output) ?? output		// parse the output if a parsing function is defined
+	// let output = new TextDecoder().decode(stdout)
+	// output = test.parse?.(output) ?? output		// parse the output if a parsing function is defined
 
 	// TODO: Rework logic to handle files as ReadableStreams throughout the program
 	const files = new Map<string, string>()
+
 	for await (const entry of walk(temp, { includeDirs: false, includeSymlinks: false })) {
 		const path = relative(temp, entry.path)
 		
@@ -38,10 +40,9 @@ export async function executeTest(test: Test, program: string): Promise<TestResu
 	}
 
 	return {
-		stdout: output,
-		meta: {
-			code
-		},
-		files: new Map<string, string>()
-	}  as TestResult
+		out: output,
+		status: instance.status,
+		stats: {},
+		files: new Map<string, ReadableStream<Uint8Array>>()
+	}  
 }
