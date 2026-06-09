@@ -14,7 +14,7 @@ export default class extends Test {
 
     // OPTIONAL: Declare how the output should be transformed
     // transform() {
-    //     return [ this.hash(stdout) ]  
+    //     return [ this.hash() ]  
     // }    
 
     // OPTIONAL: Include files 
