@@ -10,6 +10,7 @@ import { join } from "@std/path/join"
 import { getRootDir } from "$src/utils/dirs.ts"
 import cfg from "$src/utils/state.ts"
 import { resolve } from "@std/path/resolve"
+import { bold, red } from "@std/fmt/colors"
 
 export const program = new Command()
 
@@ -18,6 +19,11 @@ program.name("utt")
 		"Universal Testing Tool - easily write and run tests for any program",
 	)
 	.version(denoJson.version)
+	.configureOutput({
+		outputError: (str, write) => {
+			write(red(bold("[ERROR] " + str)))
+		}
+	})
 
 // TEST COMMAND
 

@@ -1,10 +1,9 @@
 export const UTEST_TEST_EXT = ".js"
 export const UTEST_EXT = ".zip"
 
-export const UTEST_TEST_FNAME = "test" + UTEST_EXT
+export const UTEST_TEST_FNAME = "test" + UTEST_TEST_EXT
 export const UTEST_MODEL_OUT_FNAME = "model.out"
 export const UTEST_STATUS_FNAME = "status.json"
-export const UTEST_FILES_DIR = "files/"
 
 export const UTT_CONFIG_NAME = "utt_config"
 export const UTT_WORKSPACE_DIR = ".utt"

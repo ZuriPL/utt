@@ -1,18 +1,28 @@
 // This module is responsible for the actual running of the tested program
 
 import type { Test, TestOutput } from "utt"
-import { makeTemp } from "$src/utils/temp.ts"
+import { makeTemp } from "$utils/temp.ts"
+import { join } from "@std/path"
+import { walk } from "@std/fs"
 
 // runs a test and returns data regarding its execution
 export async function executeTest(test: Test, program: string): Promise<TestOutput> {
 	// prepare the task
-	const temp = await makeTemp()
+	const workingDir = await makeTemp()
+
+	// add files declared by the user
+	for (const [ file, content ] of await test.__files()) {
+		await Deno.writeFile(
+			join(workingDir, file),
+			content
+		)
+	}
 
 	const command = new Deno.Command(program, {
 		stdin: "piped",
 		stdout: "piped",
 		args: test.args(),
-		cwd: temp
+		cwd: workingDir
 	})
 
 	const instance = command.spawn()
@@ -26,10 +36,17 @@ export async function executeTest(test: Test, program: string): Promise<TestOutp
 		output = output.pipeThrough(transform)
 	}
 
+	// return files after the execution of the program
+	const files = new Map<string, ReadableStream<Uint8Array>>()
+	for await (const entry of walk(workingDir, { includeDirs: false, includeSymlinks: false })) {
+		const file = await Deno.open(entry.path) // the file should not be closed, reading the stream will do it
+		files.set(entry.name, file.readable)
+	}
+
 	return {
 		out: output,
 		status: instance.status,
 		stats: {},
-		files: new Map<string, ReadableStream<Uint8Array>>()
+		files 
 	}  
 }

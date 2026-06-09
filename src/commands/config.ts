@@ -1,5 +1,7 @@
 import cfg from "$src/utils/state.ts"
 import { checkbox, input, select, Separator } from "@inquirer/prompts"
+import { exists } from "@std/fs/exists"
+import { resolve } from "@std/path/resolve"
 
 enum Page {
 	main = "MAIN",
@@ -84,6 +86,11 @@ async function programPage(): Promise<Page> {
 	const value = await input({
 		message: "Enter the path to the tested program",
 		default: cfg.get("cfg.program"),
+		required: true,
+		prefill: "editable",
+		validate: async (path) => {
+			return await exists(resolve(path)) ? true : "The program doesn't exist" 
+		}
 	}, {
 		clearPromptOnDone: true,
 	})

@@ -8,6 +8,7 @@ import { join } from "@std/path"
 import { assertDir, getSrcDir, getTestsDir } from "$src/utils/dirs.ts"
 import cfg from "$src/utils/state.ts"
 import { ZipFile } from "$src/utils/zip.ts"
+import { brightYellow, yellow } from "@std/fmt/colors"
 
 export async function compilePackage(pkg: string, program?: string) {
     program = program ?? cfg.get("cfg.program")
@@ -83,14 +84,18 @@ async function compileTest(src: string, dest: string, testName: string, program:
     const result = await executeTest(test, program)
     
     // populate the archive
-    await zip.addFile("test.js", testFile.readable)
-    await zip.addFile("model.out", result.out)
-    await zip.addFile("status.json", ReadableStream.from([JSON.stringify(await result.status)]).pipeThrough(new TextEncoderStream()))
-    
+    await zip.addFile("test.js", testFile.readable, "meta")
+    await zip.addFile("model.out", result.out, "meta")
+    await zip.addFile("status.json", ReadableStream.from([JSON.stringify(await result.status)]).pipeThrough(new TextEncoderStream()), "meta")
+    for (const [ path, file ] of result.files) {
+        await zip.addFile(path, file)
+    }
+
     // assert the test returns with the declared exit code
-    test.__assertCode?.((await result.status).code)
-    
-    for (const [ path, file ] of await test.__files()) {
-        await zip.addFile("env/" + path, file)
+    try {
+        test.__assertCode?.((await result.status).code)
+    } catch (e) {
+        console.log(brightYellow(e as string))
+        await Deno.remove(archivePath)
     }
 }

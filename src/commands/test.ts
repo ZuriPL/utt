@@ -1,6 +1,7 @@
 import { readPackage, readAll } from "$src/tester/finder.ts"
 import type { TestDescriptor } from "$types/tests.ts"
 import { runTests } from "$src/tester/runner.ts"
+import { terminateWorkers } from "@zip-js/zip-js"
 
 type OptionsObject = {
 	program: string
@@ -32,5 +33,7 @@ export async function testCommand(pkg: string, options: OptionsObject) {
 		descriptors = await readAll()
 	}
 
-	runTests(descriptors, program)
+	await runTests(descriptors, program)
+
+	await terminateWorkers()
 }
