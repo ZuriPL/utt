@@ -1,3 +1,5 @@
+import type { BaseTest } from "$shared/base.ts"
+
 type Constructor<T = object> = abstract new (...args: any[]) => T;
 
 class stdinStream {
@@ -21,10 +23,6 @@ class stdinStream {
 
 		return this.#stream
 	}
-}
-
-abstract class BaseTest {
-    abstract input(): void
 }
 
 export const useInput = function<T extends Constructor<BaseTest>>(Base: T) {

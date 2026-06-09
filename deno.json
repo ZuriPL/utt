@@ -26,6 +26,7 @@
 		"log-update": "npm:log-update@^8.0.0",
 		"ora": "npm:ora@^9.4.0",
 		"@types/node": "npm:@types/node@^25.9.1",
+		"stream-equal": "npm:stream-equal@^2.0.1",
 		"utt": "./shared/sdk.ts"
 	},
 	"compile": {
@@ -46,6 +47,6 @@
 		"semiColons": false,
 		"singleQuote": false,
 		"proseWrap": "always",
-		"exclude": [".utt"]
+		"exclude": [ ".utt" ]
 	}
 }

@@ -93,34 +93,7 @@ export abstract class BaseTest {
 		return createHashStream()
 	}
 
-	// CHECKING UTILITIES
-
-	/**
-     * Checks whether every parameter of the test matches the expected resukt
-     * @param {TestOutput} output the actual output received from running the test
-     * @param {TestOutput} expected - the expected output of the test
-     * @throws {Error} throws when a difference is found
-     * @returns {void}
-     */
-	async assertExactOutput(output: TestOutput, expected: TestOutput): Promise<void> {
-		// if (output.stdout !== expected.stdout) 
-		// 	throw new Error("Incorrect output")
-
-		if ((await output.status).code !== (await expected.status).code) 
-			throw new Error(`Program exited with ${(await output.status).code}, when ${(await expected.status).code} was expected`)
-
-		for (const [ file, expectedValue ] of expected.files) {
-			const outputValue = output.files.get(file)
-
-			if (expectedValue !== outputValue)
-				throw new Error(`File ${file} is incorrect`)
-		}
-
-		if (output.files.size !== expected.files.size)
-			throw new Error("Program created too many files")
-		
-	}
-
+	
 	/**
 	 * DO NOT USE IN YOUR TEST
 	 */

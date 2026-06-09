@@ -1,4 +1,5 @@
 import { useInput } from "$shared/mixins/input.ts"
+import { useChecks } from "$shared/mixins/checks.ts"
 import { BaseTest } from "$shared/base.ts"
 
 export type Metadata = {
@@ -12,7 +13,7 @@ export type TestOutput = {
 		files: Map<string, ReadableStream<Uint8Array>>
 }
 
-const composition = useInput(BaseTest)
+const composition = useChecks(useInput(BaseTest))
 
 export interface Test extends InstanceType<typeof composition> {}
 

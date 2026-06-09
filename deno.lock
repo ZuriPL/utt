@@ -40,6 +40,7 @@
     "npm:esbuild@*": "0.28.0",
     "npm:log-update@8": "8.0.0",
     "npm:ora@^9.4.0": "9.4.0",
+    "npm:stream-equal@^2.0.1": "2.0.1",
     "npm:sucrase@*": "3.35.1"
   },
   "jsr": {
@@ -979,6 +980,9 @@
     "stdin-discarder@0.3.2": {
       "integrity": "sha512-eCPu1qRxPVkl5605OTWF8Wz40b4Mf45NY5LQmVPQ599knfs5QhASUm9GbJ5BDMDOXgrnh0wyEdvzmL//YMlw0A=="
     },
+    "stream-equal@2.0.1": {
+      "integrity": "sha512-AWR6CrePDXP/6fAf63rBT+wy8jxFIg7Q2l3YuckVQC06zkiYG2cdvYalZN9LBAch5MoXJUOmUckcoOtJw1PLfQ=="
+    },
     "streamx@2.27.0": {
       "integrity": "sha512-WZ189TKnHoAokYHvwzaAQMpd55cgUmFIcJFzBSgGcb886jau5DL+XdDhTWV4ps3FLvk+OORp0dLRTPsLZ21CSA==",
       "dependencies": [
@@ -1157,7 +1161,8 @@
       "npm:commander@15",
       "npm:conf@^15.1.0",
       "npm:log-update@8",
-      "npm:ora@^9.4.0"
+      "npm:ora@^9.4.0",
+      "npm:stream-equal@^2.0.1"
     ]
   }
 }
