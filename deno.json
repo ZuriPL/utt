@@ -6,6 +6,7 @@
 		"$types/": "./types/",
 		"$src/": "./src/",
 		"$public/": "./public/",
+		"$shared/": "./shared/",
 		"@deno/emit": "jsr:@deno/emit@^0.46.0",
 		"@inquirer/prompts": "npm:@inquirer/prompts@^8.5.2",
 		"@std/crypto": "jsr:@std/crypto@^1.1.0",
