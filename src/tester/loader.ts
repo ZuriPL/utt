@@ -52,8 +52,6 @@ export async function parseUtest(path: string): Promise<{ test: Test; expected: 
 		}
 	}
 
-	console.log(result.expected.files?.keys().toArray())
-
 	return result as {
 		test: Test,
 		expected: TestOutput

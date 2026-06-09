@@ -12,9 +12,9 @@ export default class extends Test {
         this.line("A line of stdin")
     }
 
-    // OPTIONAL: Parse the output
-    // parse(stdout) {
-    //     return this.hash(stdout)   
+    // OPTIONAL: Declare how the output should be transformed
+    // transform() {
+    //     return [ this.hash(stdout) ]  
     // }    
 
     // OPTIONAL: Include files 
@@ -22,11 +22,10 @@ export default class extends Test {
     //     this.importFile("real.txt", "./path/to/real.txt")
     //     this.textFile("new.in", "2137")
     // }
-    
 
     // Verify that the test passed succesfully
     // use a helper or write the logic yourself
     async check(output, expected) {
-        await this.assertExactOutput(output, expected)
+        await this.assertExact(output, expected)
     }
 }
