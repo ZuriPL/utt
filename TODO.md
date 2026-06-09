@@ -7,8 +7,9 @@
 [] advanced test status reporting
 [] break up sdk.ts (and the base Test class) into separate objects
 
-# MISC
+# PROGRAM
 
+[] implement push/pull
 [] clean up dependencies
 [] move test scripts back to .ts, transpiling with esbuild? or native deno?
 [] smaller executable (somehow)
@@ -34,5 +35,9 @@
 
 - breaking up files into a mixin is left for {break up sdk.ts}
 - by multi tests i mean a test that generates n (i. e. 100) instances of itself with randomized values, so esentially generators
-- define(): in general, methods that make it easier to create input. For example, if the program requires us to create objects before we can
-operate on it, there should be a helper to generate these creation/deletions automatically in the test
+- define(): in general, methods that make it easier to create input. For example, if the program requires us to create objects before they can
+operate on them, there should be a helper to generate these creations/deletions automatically in the test
+- push/pull refers to a system for uploading and downloading test packages. 
+2 possibilities for this system are: 
+a) a web server accepting GET/POST requests for gzipped tars containing .utest files. potential for abuse, and it has to be hosted somewhere (maybe on students?)
+b) integration with git, would use git to create repos from a publicly available template, repos would be owned by whoever wrote the tests. Potentially unfeasable. A big plus for this solution is that it'd allow for automatic setting up of packages preloaded with the compiled binary alongside the tests, with no extra steps from the test author 
