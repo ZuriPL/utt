@@ -22,6 +22,7 @@
 [] Performance tracking (/usr/bin/time, perf)
 [] Valgrind support
 [] rewrite runner/finder/compiler so that they can share code 
+[] the order of assertions in check() should not impact whether a test can finish 
 
 # SDK
 
@@ -41,3 +42,4 @@ operate on them, there should be a helper to generate these creations/deletions 
 2 possibilities for this system are: 
 a) a web server accepting GET/POST requests for gzipped tars containing .utest files. potential for abuse, and it has to be hosted somewhere (maybe on students?)
 b) integration with git, would use git to create repos from a publicly available template, repos would be owned by whoever wrote the tests. Potentially unfeasable. A big plus for this solution is that it'd allow for automatic setting up of packages preloaded with the compiled binary alongside the tests, with no extra steps from the test author 
+- order of assertions - the program won't quit unless it's stdout is unlocked (that is, it's read fully) and we can't read the exit code until the program quits. Therefore the reading of the output has to happen first (and always), but we should also give users the ability to implement their own validation logic, without them being able to deadlock the test runner. Possibly tee() could be helpful, or redesign the check() method 
