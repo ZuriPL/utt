@@ -1,5 +1,5 @@
 import { readPackage, readAll } from "$src/tester/finder.ts"
-import type { TestDescriptor } from "$types/tests.ts"
+import type { TestDescriptor } from "$utils/types.ts"
 import { runTests } from "$src/tester/runner.ts"
 import { terminateWorkers } from "@zip-js/zip-js"
 

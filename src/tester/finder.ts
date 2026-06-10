@@ -1,7 +1,7 @@
 // This module is responsible for finding all tests in the workspace which meet given criteria,
 // such as belonging to a package or a group
 
-import { TestDescriptor } from "$types/tests.ts"
+import { TestDescriptor } from "$utils/types.ts"
 import { getTestsDir } from "$src/utils/dirs.ts"
 import { join } from "@std/path/join"
 import { parse } from "@std/path/parse"

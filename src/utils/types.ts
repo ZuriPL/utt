@@ -1,5 +1,5 @@
 import { join } from "@std/path/join"
-import { getTestsDir } from "$src/utils/dirs.ts"
+import { getTestsDir } from "$utils/dirs.ts"
 import { basename } from "@std/path/basename"
 
 export class TestDescriptor {
