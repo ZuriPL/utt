@@ -15,6 +15,7 @@
 - [ ] clean up dependencies
 - [ ] move test scripts back to .ts, transpiling with esbuild? or native deno?
 - [ ] smaller executable (somehow)
+- [ ] 'unpack' command to extract test file from a zip
 
 # Test execution
 
