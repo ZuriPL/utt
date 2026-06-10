@@ -4,6 +4,7 @@
 [x] rewrite test validators to use streams
 [x] rewrite loader.ts/runner.ts to work with new .utest format (.zip)
 [x] reporting the test status
+[] zip files need to contain both the state before and after the test 
 [] advanced test status reporting
 [] break up sdk.ts (and the base Test class) into separate objects
 
