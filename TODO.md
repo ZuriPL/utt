@@ -37,7 +37,7 @@
 - [x] rewrite parse (and other parts of the compiler/runner) to use streams
 - [ ] Multi tests
 - [ ] add a random number generator (the seed should probably be static, maybe file creation date? or some other file attribute)
-- [ ] declaring timeout, valgrind and other*
+- [ ] declaring timeout, valgrind, special input/output (/dev/full, /dev/random etc.) and other*
 
 # NOTES
 
