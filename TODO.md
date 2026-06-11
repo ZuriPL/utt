@@ -28,6 +28,7 @@
 - [ ] Valgrind support
 - [ ] rewrite runner/finder/compiler so that they can share code 
 - [ ] the order of assertions in check() should not impact whether a test can finish - rewrite check() to return an object declaring how each thing should be asserted 
+- [ ] keep test output flag
 
 # SDK
 
