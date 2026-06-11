@@ -8,6 +8,7 @@
 - [ ] advanced test status reporting
 - [x] break up sdk.ts (and the base Test class) into separate objects
 - [ ] the input stream needs to be dynamic, not load the entire stdin into memory
+- [ ] hide test orchestration methods from the test writer by using Symbol
 
 # PROGRAM
 
@@ -26,7 +27,7 @@
 - [ ] Performance tracking (/usr/bin/time, perf)
 - [ ] Valgrind support
 - [ ] rewrite runner/finder/compiler so that they can share code 
-- [ ] the order of assertions in check() should not impact whether a test can finish 
+- [ ] the order of assertions in check() should not impact whether a test can finish - rewrite check() to return an object declaring how each thing should be asserted 
 
 # SDK
 
@@ -35,9 +36,12 @@
 - [ ] define() for creating objects
 - [x] rewrite parse (and other parts of the compiler/runner) to use streams
 - [ ] Multi tests
+- [ ] add a random number generator (the seed should probably be static, maybe file creation date? or some other file attribute)
+- [ ] declaring timeout, valgrind and other*
 
 # NOTES
 
+- * - should this even be in the sdk? maybe as validation methods? or a whole new field? also, has to be able to be disabled/override by the user with flags
 - breaking up files into a mixin is left for {break up sdk.ts}
 - by multi tests i mean a test that generates n (i. e. 100) instances of itself with randomized values, so esentially generators
 - define(): in general, methods that make it easier to create input. For example, if the program requires us to create objects before they can
