@@ -11,6 +11,8 @@ import { UTEST_MODEL_OUT_FNAME, UTEST_STATUS_FNAME, UTEST_TEST_FNAME } from "$ut
 import { loadTest } from "$src/tester/loader.ts"
 import { encodeBase64Url } from "@std/encoding"
 import { toJson, toText } from "@std/streams"
+import { walk } from "@std/fs/walk"
+import { relative } from "@std/path/relative"
 
 const orange = (text: string) => rgb24(text, 0xffa500)
 
@@ -30,9 +32,25 @@ type UTest = {
     files: Map<string, ReadableStream<Uint8Array>>
 }
 
-async function validateTest(output: TestOutput, expected: TestOutput, test: Test): Promise<TestReport> {
+async function validateTest(utest: UTest, output: TestOutput, env: string): Promise<TestReport> {
     try {
-        await test.check(output, expected)
+        const checks = utest.test.check() ?? utest.test.defaultChecks
+
+        // these functions throw when they detect a mismatch
+        await checks.stdout?.(output.out, utest.expected.out)
+        checks.code?.((await output.status).code, (await utest.expected.status).code)
+
+        if (checks.files) {
+            const files = new Map<string, ReadableStream<Uint8Array>>()
+            for await (const file of walk(env, { includeDirs: false, includeSymlinks: false })) {
+                files.set(
+                    relative(env, file.path), 
+                    (await Deno.open(file.path)).readable
+                )
+            }
+            await checks.files(files, utest.files)
+        }
+
         return { state: true }
     } catch (error) {
         if (error instanceof Error) {
@@ -69,15 +87,15 @@ export async function runTests(descriptors: TestDescriptor[], program: string) {
         try {
             const path = await test.resolveClassPath()
 
-            const parsed = await parseUtest(path, env)
+            const utest = await parseUtest(path, env)
 
-            const output = await executeTest(parsed.test, program, env)
+            const output = await executeTest(utest.test, program, env)
 
-            await discardFiles(parsed.test, env)
+            await discardFiles(utest.test, env)
 
             console.log(orange(`Running test: ${bold(fullName)}...`))
 
-            const report: TestReport = await validateTest(output, parsed.expected, parsed.test)
+            const report: TestReport = await validateTest(utest, output, env)
 
             if (report.state) {
                 console.log(brightGreen(`[PASS] Test ${bold(fullName)} passed succesfully`))
@@ -103,7 +121,6 @@ async function parseUtest(path: string, env: string): Promise<UTest> {
 	const result = {
         files: new Map(),
         expected: {},
-        test: undefined
     } as Partial<UTest> & {files: UTest["files"], expected: object }
 
 	for await (const file of stream) {

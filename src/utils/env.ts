@@ -20,7 +20,7 @@ export async function discardFiles(test: Test, env: string) {
             await Deno.remove(join(env, path))
         } catch (e) {
             if (e instanceof Deno.errors.NotFound) {
-                console.log(yellow(`[WARNING]: File ${path} was deleted`))
+                console.log(yellow(`[WARNING]: File ${path} was not found`))
                 return
             }
 

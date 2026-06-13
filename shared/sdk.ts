@@ -8,9 +8,9 @@ export type Metadata = {
 }
 
 export type TestOutput = {
-		out: ReadableStream<Uint8Array>,
-		status: Deno.ChildProcess["status"],
-		stats: {},
+	out: ReadableStream<Uint8Array>,
+	status: Deno.ChildProcess["status"],
+	stats: {},
 }
 
 // Regular Test Base class
